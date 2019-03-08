@@ -1,0 +1,27 @@
+{
+  "name": "node-pdfium",
+  "version": "1.0.0",
+  "description": "node bindings for pdfium",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/renaesop/node-pdfium.git"
+  },
+  "keywords": [
+    "pdf",
+    "pdfium"
+  ],
+  "author": "renaesop",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/renaesop/node-pdfium/issues"
+  },
+  "homepage": "https://github.com/renaesop/node-pdfium#readme",
+  "dependencies": {
+    "bindings": "^1.4.0",
+    "nan": "^2.12.1"
+  }
+}

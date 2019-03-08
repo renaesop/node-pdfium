@@ -1,0 +1,18 @@
+#include <nan.h>
+#include <vector>
+#include <utility>
+#include <memory>
+
+namespace node_pdfium {
+    struct PdfiumOption {
+        PdfiumOption() = default;
+
+        int32_t dpi = 324;
+        int32_t copies = 1;
+        int32_t width = 0;
+        int32_t height = 0;
+        std::vector<std::pair<int32_t, int32_t>> page_list;
+    };
+
+    std::unique_ptr<PdfiumOption> V8OptionToStruct(const v8::Local<v8::Value>& options);
+}
