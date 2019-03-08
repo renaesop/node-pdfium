@@ -1,13 +1,14 @@
 #include "printer_win.h"
+#include <iostream>
 
-Unique_HDC node_pdfium::GetPrinterDC(const v8::Local<v8::Value>& printerName) {
+namespace node_pdfium
+{
+Unique_HDC GetPrinterDC(const v8::Local<v8::Value> &printerName)
+{
     const v8::Local<v8::String> printerNameV8Str = printerName->ToString();
 
+    Unique_HDC printerDC(::CreateDCW(L"WINSPOOL", reinterpret_cast<LPCWSTR>(*v8::String::Value(printerNameV8Str)), NULL, NULL));
 
-    auto printerDC = ::CreateDCW(L"WINSPOOL", static_cast<LPCWSTR> (*v8::String::Value(printerNameV8Str)), NULL, NULL);
-
-    if (!printerDC) {
-        return -1;
-    }
-    return Unique_HDC(printerDC);
+    return printerDC;
 }
+} // namespace node_pdfium

@@ -29,7 +29,7 @@ std::unique_ptr<PdfiumOption> V8OptionToStruct(const v8::Local<v8::Value> &optio
                                   .ToLocalChecked())
                          .ToLocalChecked();
             auto arr = v8::Local<v8::Array>::Cast(o);
-            for (auto i = 0; i < arr->Length(); ++i)
+            for (unsigned int i = 0; i < arr->Length(); ++i)
             {
                 const auto &item = v8::Local<v8::Array>::Cast(Nan::Get(arr, i).ToLocalChecked());
                 auto pair = std::make_pair(

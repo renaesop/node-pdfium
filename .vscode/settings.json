@@ -43,6 +43,26 @@
         "vector": "cpp",
         "__functional_03": "cpp",
         "cstdarg": "cpp",
-        "clocale": "cpp"
-    }
+        "clocale": "cpp",
+        "istream": "cpp",
+        "xlocnum": "cpp",
+        "xmemory": "cpp",
+        "xutility": "cpp",
+        "system_error": "cpp",
+        "xlocale": "cpp",
+        "cmath": "cpp",
+        "ios": "cpp",
+        "ostream": "cpp",
+        "streambuf": "cpp",
+        "xfacet": "cpp",
+        "xiosbase": "cpp",
+        "xlocinfo": "cpp",
+        "xmemory0": "cpp",
+        "xstddef": "cpp",
+        "xstring": "cpp",
+        "xtr1common": "cpp",
+        "xtree": "cpp",
+        "sstream": "cpp"
+    },
+    "python.formatting.provider": "yapf"
 }

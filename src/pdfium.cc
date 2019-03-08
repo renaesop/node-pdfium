@@ -1,50 +1,61 @@
-#include <nan.h>
-#include <fpdfview.h>
-#include <memory>
+#include "inc.h"
 
 #include "printer_win.h"
 #include "pdfium_option.h"
 #include "pdfium_imp.h"
-// @TODO new thread?
-#define CHECK_STRING(name) auto checked = checkString(#name);\
-    if (checked) {return checked}
+
+#include <iostream>
+
+#define CHECK_STRING(name)                     \
+    auto err##name = checkString(name, #name); \
+    if (err##name)                             \
+    {                                          \
+        return;                      \
+    }
 
 namespace node_pdfium
 {
-static v8::Local<v8::Value> checkString(const v8::Local<v8::Value> &arg, const std::string &name)
+bool checkString(const v8::Local<v8::Value> &arg, const std::string &name)
 {
-    if (!arg.IsString())
+    v8::Isolate *isolate = v8::Isolate::GetCurrent();
+    if (!arg->IsString())
     {
-        return isolate->ThrowException(v8::Exception::TypeError(
-            v8::String::NewFromUtf8(isolate,
-                                    std::string('') + "Wrong type of " + name)
-                .ToLocalChecked()));
+        std::stringstream ss;
+        ss << "Wrong type of" << name;
+        std::string s = ss.str();
+        isolate->ThrowException(v8::Exception::TypeError(Nan::New<v8::String>(s.c_str()).ToLocalChecked()));
+        return false;
     }
-    return null;
+    return true;
 }
 
-void PrintPDF(const FunctionCallbackInfo<Value> &args)
+void PrintPDF(const Nan::FunctionCallbackInfo<v8::Value> &args)
 {
     v8::Isolate *isolate = args.GetIsolate();
     const v8::Local<v8::Value> &printerName = args[0];
     const v8::Local<v8::Value> &filePath = args[1];
     const v8::Local<v8::Value> &v8_options = args[2];
 
-    CHECK_STRING(printerName);
-    CHECK_STRING(filePath);
-    
-    Unique_HDC printer_dc = GetPrinterDC(printerName);
-    if (HDC == -1)
+    CHECK_STRING(printerName)
+
+    CHECK_STRING(filePath)
+
+
+    Unique_HDC printer_dc = std::move(GetPrinterDC(printerName));
+
+
+    if (printer_dc == nullptr)
     {
-        return isolate->ThrowException(v8::Exception::TypeError(
-            v8::String::NewFromUtf8(isolate,
-                                    "Cannot initial device context for the printer")
+        isolate->ThrowException(v8::Exception::TypeError(
+            Nan::New<v8::String>("Cannot initial device context for the printer")
                 .ToLocalChecked()));
+        return;
     }
 
     std::unique_ptr<PdfiumOption> options(V8OptionToStruct(v8_options));
     // @TODO
-    auto doc = std::make_unique<PDFDocument>(filePath);
+    auto filePathStr = Nan::To<v8::String>(printerName).ToLocalChecked();
+    auto doc = std::make_unique<PDFDocument>(reinterpret_cast<LPCWSTR>(*v8::String::Value(filePathStr)));
 
     doc->LoadDocument();
 
@@ -53,6 +64,7 @@ void PrintPDF(const FunctionCallbackInfo<Value> &args)
 
 NAN_MODULE_INIT(Init)
 {
+    FPDF_InitLibrary();
     Nan::Set(target, Nan::New<v8::String>("printPDF").ToLocalChecked(),
              Nan::GetFunction(Nan::New<v8::FunctionTemplate>(PrintPDF)).ToLocalChecked());
 }

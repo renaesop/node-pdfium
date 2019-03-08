@@ -14,9 +14,10 @@ bool node_pdfium::PDFDocument::LoadDocument()
         return false;
     }
     doc.reset(pdf_pointer);
+    return true;
 }
 
-int32_t node_pdfium::PDFDocument::PrintDocument(HDC dc, const PdfiumOption &options)
+void node_pdfium::PDFDocument::PrintDocument(HDC dc, const PdfiumOption &options)
 {
     auto pageCount = FPDF_GetPageCount(doc.get());
 
@@ -27,9 +28,11 @@ int32_t node_pdfium::PDFDocument::PrintDocument(HDC dc, const PdfiumOption &opti
     {
         if (std::size(options.page_list) > 0)
         {
-            for (auto pair: options.page_list) {
-                for (auto j = pair.first; j < pair.second + 1; ++j) {
-                     printPage(dc, j, width, height);
+            for (auto pair : options.page_list)
+            {
+                for (auto j = pair.first; j < pair.second + 1; ++j)
+                {
+                    printPage(dc, j, width, height);
                 }
             }
         }
@@ -43,13 +46,13 @@ int32_t node_pdfium::PDFDocument::PrintDocument(HDC dc, const PdfiumOption &opti
     }
 }
 
-int32_t node_pdfium::PDFDocument::printPage(HDC dc,
-                                            int32_t index, int32_t width, int32_t height)
+void node_pdfium::PDFDocument::printPage(HDC dc,
+                                         int32_t index, int32_t width, int32_t height)
 {
     auto page = getPage(doc.get(), index);
     if (!page)
     {
-        return -1;
+        return;
     }
     if (!width)
     {

@@ -1,7 +1,7 @@
-#include <nan.h>
-#include <vector>
-#include <utility>
-#include <memory>
+#ifndef PDFIUM_OPTION
+#define PDFIUM_OPTION
+
+#include "inc.h"
 
 namespace node_pdfium {
     struct PdfiumOption {
@@ -15,4 +15,5 @@ namespace node_pdfium {
     };
 
     std::unique_ptr<PdfiumOption> V8OptionToStruct(const v8::Local<v8::Value>& options);
-}
+};
+#endif
