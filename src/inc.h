@@ -7,6 +7,7 @@
 #include <vector>
 #include <utility>
 #include <memory>
+#include <fstream>
 #include <nan.h>
 #include <fpdfview.h>
 #include <cpp/fpdf_scopers.h>

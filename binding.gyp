@@ -2,8 +2,6 @@
     "targets": [
         {
             "target_name": "pdfium",
-            'cflags!': [ '-fno-exceptions' ],
-            'cflags_cc!': [ '-fno-exceptions' ],
             "sources": [
                 "src/pdfium_option.cc",
                 "src/printer_win.cc",

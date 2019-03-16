@@ -62,7 +62,9 @@
         "xstring": "cpp",
         "xtr1common": "cpp",
         "xtree": "cpp",
-        "sstream": "cpp"
+        "sstream": "cpp",
+        "iostream": "cpp",
+        "fstream": "cpp"
     },
     "python.formatting.provider": "yapf"
 }

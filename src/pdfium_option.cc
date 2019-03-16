@@ -1,9 +1,9 @@
 #include "pdfium_option.h"
 
-#define INIT_PDFIUM_OPTION(name)                                           \
+#define INIT_PDFIUM_OPTION(name, type)                                           \
     if (obj->Has(Nan::New< v8::String>(#name).ToLocalChecked()))            \
     {                                                                      \
-        ops->name = Nan::To< int32_t>(                                    \
+        ops->name = Nan::To< type>(                                    \
             Nan::Get(obj, Nan::New< v8::String>(#name).ToLocalChecked()).ToLocalChecked()) \
                         .FromJust();                                    \
     }
@@ -13,14 +13,16 @@ namespace node_pdfium
 std::unique_ptr<PdfiumOption> V8OptionToStruct(const v8::Local<v8::Value> &options)
 {
     auto ops = std::make_unique<PdfiumOption>();
-    if (!options->IsObject())
+    if (options->IsObject())
     {
         auto obj = options->ToObject();
 
-        INIT_PDFIUM_OPTION(dpi);
-        INIT_PDFIUM_OPTION(copies);
-        INIT_PDFIUM_OPTION(width);
-        INIT_PDFIUM_OPTION(height);
+        INIT_PDFIUM_OPTION(dpi, int32_t);
+        INIT_PDFIUM_OPTION(copies, int32_t);
+        INIT_PDFIUM_OPTION(width, int32_t);
+        INIT_PDFIUM_OPTION(height, int32_t);
+
+        ops->dpi = ops->dpi / 72;
 
         if (obj->Has(Nan::New<v8::String>("pageList").ToLocalChecked()))
         {

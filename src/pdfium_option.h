@@ -7,7 +7,7 @@ namespace node_pdfium {
     struct PdfiumOption {
         PdfiumOption() = default;
 
-        int32_t dpi = 324;
+        float dpi = 324;
         int32_t copies = 1;
         int32_t width = 0;
         int32_t height = 0;

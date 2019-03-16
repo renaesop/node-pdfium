@@ -8,7 +8,10 @@ node_pdfium::PDFDocument::PDFDocument(std::wstring &&f) : filename(f)
 
 bool node_pdfium::PDFDocument::LoadDocument()
 {
-    auto pdf_pointer = FPDF_LoadDocument(reinterpret_cast<FPDF_STRING>(filename.c_str()), "");
+    std::ifstream pdfStream = std::ifstream(filename, std::ifstream::binary | std::ifstream::in);
+    file_content.insert(file_content.end(), std::istreambuf_iterator<char>(pdfStream), std::istreambuf_iterator<char>());
+    auto pdf_pointer = FPDF_LoadMemDocument(file_content.data(), (int)file_content.size(), nullptr);
+
     if (!pdf_pointer)
     {
         return false;
@@ -19,12 +22,14 @@ bool node_pdfium::PDFDocument::LoadDocument()
 
 void node_pdfium::PDFDocument::PrintDocument(HDC dc, const PdfiumOption &options)
 {
+    PrinterDocumentJob djob(dc, filename.c_str());
+
     auto pageCount = FPDF_GetPageCount(doc.get());
 
     auto width = options.width;
     auto height = options.height;
 
-    for (int16_t i = 0; i < options.copies; i++)
+    for (int16_t i = 0; i < options.copies; ++i)
     {
         if (std::size(options.page_list) > 0)
         {
@@ -32,7 +37,7 @@ void node_pdfium::PDFDocument::PrintDocument(HDC dc, const PdfiumOption &options
             {
                 for (auto j = pair.first; j < pair.second + 1; ++j)
                 {
-                    printPage(dc, j, width, height);
+                    printPage(dc, j, width, height, options.dpi);
                 }
             }
         }
@@ -40,29 +45,30 @@ void node_pdfium::PDFDocument::PrintDocument(HDC dc, const PdfiumOption &options
         {
             for (auto j = 0; j < pageCount; j++)
             {
-                printPage(dc, j, width, height);
+                printPage(dc, j, width, height, options.dpi);
             }
         }
     }
 }
 
 void node_pdfium::PDFDocument::printPage(HDC dc,
-                                         int32_t index, int32_t width, int32_t height)
+                                         int32_t index, int32_t width, int32_t height, float dpiRatio)
 {
+    PrinterPageJob pJob(dc);
     auto page = getPage(doc.get(), index);
+
     if (!page)
     {
         return;
     }
     if (!width)
     {
-        width = static_cast<int32_t>(FPDF_GetPageWidth(page));
+        width = static_cast<int32_t>(FPDF_GetPageWidth(page) * dpiRatio);
     }
     if (!height)
     {
-        height = static_cast<int32_t>(FPDF_GetPageHeight(page));
+        height = static_cast<int32_t>(FPDF_GetPageHeight(page) * dpiRatio);
     }
-
     HRGN rgn = CreateRectRgn(0, 0, width, height);
 
     ::SelectClipRgn(dc, rgn);
@@ -72,7 +78,6 @@ void node_pdfium::PDFDocument::printPage(HDC dc,
     ::SelectObject(dc, ::GetStockObject(WHITE_BRUSH));
     // If a PS_NULL pen is used, the dimensions of the rectangle are 1 pixel less.
     ::Rectangle(dc, 0, 0, width + 1, height + 1);
-
     return ::FPDF_RenderPage(dc, page, 0, 0, width, height, 0,
                              FPDF_ANNOT | FPDF_PRINTING | FPDF_NO_CATCH);
 }
