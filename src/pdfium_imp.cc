@@ -1,6 +1,9 @@
 #include "pdfium_imp.h"
 #include <clocale>
 #include <cstdlib>
+#include <algorithm>
+
+#include <iostream>
 
 node_pdfium::PDFDocument::PDFDocument(std::wstring &&f) : filename(f)
 {
@@ -63,21 +66,28 @@ void node_pdfium::PDFDocument::printPage(HDC dc,
     }
     if (!width)
     {
-        width = static_cast<int32_t>(FPDF_GetPageWidth(page) * dpiRatio);
+        auto pageWidth = FPDF_GetPageWidth(page);
+        width = static_cast<int32_t>(pageWidth * dpiRatio);
     }
     if (!height)
     {
-        height = static_cast<int32_t>(FPDF_GetPageHeight(page) * dpiRatio);
+        auto pageHeight = FPDF_GetPageHeight(page);
+        height = static_cast<int32_t>(pageHeight * dpiRatio);
     }
-    HRGN rgn = CreateRectRgn(0, 0, width, height);
+    auto mediaWidth = ::GetDeviceCaps(dc, HORZRES);
+    auto mediaWHeight = ::GetDeviceCaps(dc, VERTRES);
+
+    HRGN rgn = CreateRectRgn(0, 0, mediaWidth, mediaWHeight);
+
 
     ::SelectClipRgn(dc, rgn);
     ::DeleteObject(rgn);
 
     ::SelectObject(dc, ::GetStockObject(NULL_PEN));
     ::SelectObject(dc, ::GetStockObject(WHITE_BRUSH));
+    
     // If a PS_NULL pen is used, the dimensions of the rectangle are 1 pixel less.
-    ::Rectangle(dc, 0, 0, width + 1, height + 1);
+    ::Rectangle(dc, 0, 0, mediaWidth, mediaWHeight);
     return ::FPDF_RenderPage(dc, page, 0, 0, width, height, 0,
                              FPDF_ANNOT | FPDF_PRINTING | FPDF_NO_CATCH);
 }
