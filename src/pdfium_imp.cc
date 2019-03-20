@@ -97,3 +97,6 @@ FPDF_PAGE node_pdfium::PDFDocument::getPage(const FPDF_DOCUMENT &doc, int32_t in
     loaded_pages[index] = std::move(page);
     return page_ptr;
 }
+
+
+ 
