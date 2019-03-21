@@ -1,6 +1,6 @@
 {
   "name": "node-pdfium",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "node bindings for pdfium",
   "main": "index.js",
   "scripts": {
