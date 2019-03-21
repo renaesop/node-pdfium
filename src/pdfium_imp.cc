@@ -3,7 +3,6 @@
 #include <cstdlib>
 #include <algorithm>
 
-#include <iostream>
 
 node_pdfium::PDFDocument::PDFDocument(std::wstring &&f) : filename(f)
 {
@@ -85,7 +84,7 @@ void node_pdfium::PDFDocument::printPage(HDC dc,
 
     ::SelectObject(dc, ::GetStockObject(NULL_PEN));
     ::SelectObject(dc, ::GetStockObject(WHITE_BRUSH));
-    
+
     // If a PS_NULL pen is used, the dimensions of the rectangle are 1 pixel less.
     ::Rectangle(dc, 0, 0, mediaWidth, mediaWHeight);
     return ::FPDF_RenderPage(dc, page, 0, 0, width, height, 0,
