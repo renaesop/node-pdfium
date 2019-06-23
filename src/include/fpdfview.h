@@ -154,22 +154,24 @@ typedef int FPDF_ANNOT_APPEARANCEMODE;
 // Dictionary value types.
 typedef int FPDF_OBJECT_TYPE;
 
-#ifdef FPDFSDK_EXPORTS
-# if defined(_WIN32)
-#  define FPDF_EXPORT __declspec(dllexport)
-#  define FPDF_CALLCONV __stdcall
-# else
-#  define FPDF_EXPORT __attribute__((visibility("default")))
-#  define FPDF_CALLCONV
-# endif
+#if defined(WIN32)
+#if defined(FPDF_IMPLEMENTATION)
+#define FPDF_EXPORT __declspec(dllexport)
 #else
-# if defined(_WIN32)
-#  define FPDF_EXPORT __declspec(dllimport)
-#  define FPDF_CALLCONV __stdcall
-# else
-#  define FPDF_EXPORT
-#  define FPDF_CALLCONV
-# endif
+#define FPDF_EXPORT __declspec(dllimport)
+#endif  // defined(FPDF_IMPLEMENTATION)
+#else
+#if defined(FPDF_IMPLEMENTATION)
+#define FPDF_EXPORT __attribute__((visibility("default")))
+#else
+#define FPDF_EXPORT
+#endif  // defined(FPDF_IMPLEMENTATION)
+#endif  // defined(WIN32)
+
+#if defined(WIN32) && defined(FPDFSDK_EXPORTS)
+#define FPDF_CALLCONV __stdcall
+#else
+#define FPDF_CALLCONV
 #endif
 
 // Exported Functions
@@ -462,10 +464,11 @@ typedef struct _FPDF_FILEHANDLER {
 // Return value:
 //          A handle to the loaded document, or NULL on failure.
 // Comments:
-//          The application must keep the file resources valid until the PDF
-//          document is closed.
+//          The application must keep the file resources |pFileAccess| points to
+//          valid until the returned FPDF_DOCUMENT is closed. |pFileAccess|
+//          itself does not need to outlive the FPDF_DOCUMENT.
 //
-//          The loaded document can be closed with FPDF_CloseDocument.
+//          The loaded document can be closed with FPDF_CloseDocument().
 //
 //          See the comments for FPDF_LoadDocument() regarding the encoding for
 //          |password|.

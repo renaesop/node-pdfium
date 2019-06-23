@@ -11,6 +11,7 @@
 #include "../fpdf_formfill.h"
 #include "../fpdf_structtree.h"
 #include "../fpdf_text.h"
+#include "../fpdf_transformpage.h"
 #include "../fpdfview.h"
 
 // Custom deleters for using FPDF_* types with std::unique_ptr<>.
@@ -25,6 +26,12 @@ struct FPDFAvailDeleter {
 
 struct FPDFBitmapDeleter {
   inline void operator()(FPDF_BITMAP bitmap) { FPDFBitmap_Destroy(bitmap); }
+};
+
+struct FPDFClipPathDeleter {
+  inline void operator()(FPDF_CLIPPATH clip_path) {
+    FPDF_DestroyClipPath(clip_path);
+  }
 };
 
 struct FPDFDocumentDeleter {
