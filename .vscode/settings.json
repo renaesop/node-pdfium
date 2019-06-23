@@ -66,5 +66,6 @@
         "iostream": "cpp",
         "fstream": "cpp"
     },
-    "python.formatting.provider": "yapf"
+    "python.formatting.provider": "yapf",
+    "python.pythonPath": "/Library/Frameworks/Python.framework/Versions/2.7/bin/python"
 }

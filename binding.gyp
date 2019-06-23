@@ -13,20 +13,20 @@
                 "src/include"
             ],
             "variables": {
-                "GS4JS_HOME%": "<!(node pdfium-env-home.js)",
-                "GS4JS_LIB%": "pdfium.dll.lib",
-                "GS4JS_DLL%": "pdfium.dll",
+                "PDFIUM_HOME%": "<!(node pdfium-env-home.js)",
+                "PDFIUM_LIB%": "pdfium.dll.lib",
+                "PDFIUM_DLL%": "pdfium.dll",
                 "conditions": [
                     ['"<!(node pdfium-env-home.js)" == ""', {
-                        "GS4JS_HOME%": "C:/Downloads/pdfium"
+                        "PDFIUM_HOME%": "C:/Downloads/pdfium"
                     }]
                 ]
             },
-            "libraries": ["<(module_root_dir)/build/Release/<(GS4JS_LIB)"],
+            "libraries": ["<(module_root_dir)/build/Release/<(PDFIUM_LIB)"],
             "copies": [
                 {
                     "destination": "<(module_root_dir)/build/Release",
-                    "files": ["<(GS4JS_HOME)/bin/<(GS4JS_DLL)", "<(GS4JS_HOME)/lib/<(GS4JS_LIB)"]
+                    "files": ["<(PDFIUM_HOME)/bin/<(PDFIUM_DLL)", "<(PDFIUM_HOME)/lib/<(PDFIUM_LIB)"]
                 }
             ]
         }
