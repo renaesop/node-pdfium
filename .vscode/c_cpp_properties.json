@@ -1,21 +1,24 @@
 {
     "configurations": [
         {
-            "name": "Mac",
+            "name": "Win32",
             "includePath": [
-                "${workspaceFolder}/src/include",
-                "${workspaceFolder}/node_modules/nan",
-                "~/.node-gyp/8.12.0/include/node"
+                "C:/Program Files (x86)/Microsoft Visual Studio 14.0/VC/include",
+                "~/.node-gyp/12.0.0/include/node",
+                "${workspaceRoot}/src",
+                "${workspaceRoot}/src/include",
+                "${workspaceRoot}/node_modules/nan"
             ],
-            "defines": [],
-            "macFrameworkPath": [
-                "/System/Library/Frameworks",
-                "/Library/Frameworks"
+            "defines": [
+                "_DEBUG",
+                "UNICODE",
+                "_UNICODE"
             ],
-            "compilerPath": "/usr/bin/clang",
+            "windowsSdkVersion": "10.0.14393.0",
+            "compilerPath": "C:/Program Files (x86)/Microsoft Visual Studio 14.0/VC/bin/cl.exe",
             "cStandard": "c11",
             "cppStandard": "c++17",
-            "intelliSenseMode": "clang-x64"
+            "intelliSenseMode": "msvc-x64"
         }
     ],
     "version": 4

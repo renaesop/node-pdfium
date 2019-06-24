@@ -88,7 +88,7 @@ void PrintPDF(const Nan::FunctionCallbackInfo<v8::Value> &args)
     std::unique_ptr<PdfiumOption> options(V8OptionToStruct(v8_options));
     // @TODO
     auto filePathStr = Nan::To<v8::String>(filePath).ToLocalChecked();
-    v8::String::Value utf16Val(filePathStr);
+    v8::String::Value utf16Val(v8::Isolate::GetCurrent(), filePathStr);
     std::wstring fileWstr(reinterpret_cast<wchar_t *>(*utf16Val), utf16Val.length());
     auto doc = std::make_unique<PDFDocument>(fileWstr.c_str());
 

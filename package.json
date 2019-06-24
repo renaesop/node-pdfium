@@ -22,10 +22,9 @@
   "homepage": "https://github.com/renaesop/node-pdfium#readme",
   "dependencies": {
     "bindings": "^1.4.0",
-    "nan": "^2.12.1"
+    "nan": "^2.14.0"
   },
   "devDependencies": {
-    "mocha": "^6.1.4",
-    "printer": "^0.2.2"
+    "mocha": "^6.1.4"
   }
 }
