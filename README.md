@@ -3,7 +3,9 @@
 ### Only a function, `printPDF`
 
 ````js
- pdfium.printPDF(printerName, filePath, {
+ pdfium.printPDF({
+                printerName,
+                filePath,
                 pageList,
                 width,
                 height,
