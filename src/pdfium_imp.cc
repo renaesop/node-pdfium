@@ -37,7 +37,7 @@ void node_pdfium::PDFDocument::PrintDocument(HDC dc, const PdfiumOption &options
         {
             for (auto pair : options.page_list)
             {
-                for (auto j = pair.first; j < pair.second + 1; ++j)
+                for (auto j = pair.first - 1; j < pair.second && j < pageCount; ++j)
                 {
                     printPage(dc, j, width, height, options.dpi);
                 }
