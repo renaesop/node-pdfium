@@ -35,8 +35,8 @@ std::unique_ptr<PdfiumOption> V8OptionToStruct(const v8::Local<v8::Value> &optio
             {
                 const auto &item = v8::Local<v8::Array>::Cast(Nan::Get(arr, i).ToLocalChecked());
                 auto pair = std::make_pair(
-                    Nan::To<int32_t>(Nan::Get(arr, 0).ToLocalChecked()).FromJust(),
-                    Nan::To<int32_t>(Nan::Get(arr, 1).ToLocalChecked()).FromJust());
+                    Nan::To<int32_t>(Nan::Get(item, 0).ToLocalChecked()).FromJust(),
+                    Nan::To<int32_t>(Nan::Get(item, 1).ToLocalChecked()).FromJust());
                 ops->page_list.push_back(std::move(pair));
             }
         }
