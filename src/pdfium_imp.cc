@@ -88,7 +88,7 @@ void node_pdfium::PDFDocument::printPage(HDC dc,
     // If a PS_NULL pen is used, the dimensions of the rectangle are 1 pixel less.
     ::Rectangle(dc, 0, 0, mediaWidth, mediaWHeight);
     return ::FPDF_RenderPage(dc, page, 0, 0, width, height, 0,
-                             FPDF_ANNOT | FPDF_PRINTING | FPDF_NO_CATCH);
+                             FPDF_ANNOT | FPDF_PRINTING | FPDF_NO_CATCH | FPDF_RENDER_NO_SMOOTHIMAGE | FPDF_RENDER_NO_SMOOTHTEXT);
 }
 
 FPDF_PAGE node_pdfium::PDFDocument::getPage(const FPDF_DOCUMENT &doc, int32_t index)
