@@ -3,6 +3,8 @@
 #include <cstdlib>
 #include <algorithm>
 
+#include <iostream>
+
 
 node_pdfium::PDFDocument::PDFDocument(std::wstring &&f) : filename(f)
 {
@@ -22,25 +24,29 @@ bool node_pdfium::PDFDocument::LoadDocument()
     return true;
 }
 
-void setBitmapToBlackWhite(char* buffer, int width, int height) {
-    auto total_size = width * height;
-    for (int i = 0; i < total_size; ++i)
-    {
-        auto base_offset = i * 4;
-        for (int j = 0; j < 3; ++j) {
-            if (buffer[base_offset + j] > '\32')
-            {
-                buffer[base_offset + j] = '\255';
+void setBitmapToBlackWhite(char* buffer, int width, int height, int stride) {
+    
+    std::cout << "?????" << "width: " << width << "height: " << height << "stride: " << stride  << std::endl;
+    auto total_size = stride * height;
+    for (int i = 0; i < height; ++i) {
+        for (int j = 0; j < static_cast<int>(stride / 4) && j < width; ++j) {
+            auto base_offset = i * stride + j * 4;
+            for (int k = 0; k < 3; ++k) {
+                if (buffer[base_offset + k] > '\168')
+                {
+                    buffer[base_offset + k] = '\255';
+                }
+                else
+                {
+                    buffer[base_offset + k] = '\0';
+                }   
             }
-            else
-            {
-                buffer[base_offset + j] = '\0';
-            }   
+            buffer[base_offset + 3] = '\255'; 
         }
     }
 }
 
-void node_pdf_ium::PDFDocument::setImageToBalckWhite(FPDF_PAGE page)
+void node_pdfium::PDFDocument::setImageToBalckWhite(FPDF_PAGE page)
 {
     auto count = FPDFPage_CountObjects(page);
     for (int i = 0; i < count; ++i)
@@ -50,11 +56,20 @@ void node_pdf_ium::PDFDocument::setImageToBalckWhite(FPDF_PAGE page)
         {
             auto image_bitmap = ::FPDFImageObj_GetBitmap(pdf_object);
             auto buffer = ::FPDFBitmap_GetBuffer(image_bitmap);
+            std::cout << "buffer; count: " << count << "i: " << i << std::endl;
             setBitmapToBlackWhite(static_cast<char*>(buffer),
                 ::FPDFBitmap_GetWidth(image_bitmap),
-                ::FPDFBitmap_GetHeight(image_bitmap)
+                ::FPDFBitmap_GetHeight(image_bitmap),
+                ::FPDFBitmap_GetStride(image_bitmap)
             );
-            ::FPDFImageObj_SetBitmap(page, 0, pdf_object, image_bitmap);
+              std::cout << "buffer1; count: " << count << "i: " << i << std::endl;
+            std::vector<FPDF_PAGE> vec;
+            for (const auto &pair : loaded_pages)
+            {
+                vec.push_back(pair.second.get());
+            }
+              std::cout << "buffer2; count: " << count << "i: " << i << std::endl;
+            ::FPDFImageObj_SetBitmap(vec.data(), std::size(vec), pdf_object, image_bitmap);
         }
     }
 }
@@ -96,9 +111,11 @@ void node_pdfium::PDFDocument::printPage(HDC dc,
 {
     PrinterPageJob pJob(dc);
     auto page = getPage(doc.get(), index);
+    std::cout << "error: " << ::FPDF_GetLastError() << std::endl;
     if (blackWhite) {
         setImageToBalckWhite(page);
     }
+    std::cout << "error: " << ::FPDF_GetLastError() << std::endl;
 
     if (!page)
     {

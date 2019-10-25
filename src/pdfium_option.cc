@@ -21,7 +21,7 @@ std::unique_ptr<PdfiumOption> V8OptionToStruct(const v8::Local<v8::Value> &optio
         INIT_PDFIUM_OPTION(copies, int32_t);
         INIT_PDFIUM_OPTION(width, int32_t);
         INIT_PDFIUM_OPTION(height, int32_t);
-        INIT_PDFIUM_OPTION(blackWhite);
+        INIT_PDFIUM_OPTION(blackWhite, int32_t);
 
         ops->dpi = ops->dpi / 72;
 
