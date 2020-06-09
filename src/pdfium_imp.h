@@ -21,7 +21,7 @@ private:
   ScopedFPDFDocument doc;
   std::map<int, ScopedFPDFPage> loaded_pages;
   std::vector<char> file_content;
-  void printPage(HDC dc, int32_t index, int32_t width, int32_t height, float ratio);
+  void printPage(HDC dc, int32_t index, int32_t width, int32_t height, float ratio, bool fit);
   FPDF_PAGE getPage(const FPDF_DOCUMENT &doc, int32_t index);
 };
 
