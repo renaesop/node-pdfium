@@ -39,7 +39,7 @@ void node_pdfium::PDFDocument::PrintDocument(HDC dc, const PdfiumOption &options
             {
                 for (auto j = pair.first; j < pair.second + 1; ++j)
                 {
-                    printPage(dc, j, width, height, options.dpi);
+                    printPage(dc, j, width, height, options.dpi, options.fit);
                 }
             }
         }
@@ -47,14 +47,14 @@ void node_pdfium::PDFDocument::PrintDocument(HDC dc, const PdfiumOption &options
         {
             for (auto j = 0; j < pageCount; j++)
             {
-                printPage(dc, j, width, height, options.dpi);
+                printPage(dc, j, width, height, options.dpi, options.fit);
             }
         }
     }
 }
 
 void node_pdfium::PDFDocument::printPage(HDC dc,
-                                         int32_t index, int32_t width, int32_t height, float dpiRatio)
+                                         int32_t index, int32_t width, int32_t height, float dpiRatio, bool fit)
 {
     PrinterPageJob pJob(dc);
     auto page = getPage(doc.get(), index);
@@ -63,21 +63,32 @@ void node_pdfium::PDFDocument::printPage(HDC dc,
     {
         return;
     }
-    if (!width)
-    {
-        auto pageWidth = FPDF_GetPageWidth(page);
-        width = static_cast<int32_t>(pageWidth * dpiRatio);
-    }
-    if (!height)
-    {
-        auto pageHeight = FPDF_GetPageHeight(page);
-        height = static_cast<int32_t>(pageHeight * dpiRatio);
-    }
+
+    auto pageWidth = FPDF_GetPageWidth(page);
+    auto pageHeight = FPDF_GetPageHeight(page);
     auto mediaWidth = ::GetDeviceCaps(dc, HORZRES);
-    auto mediaWHeight = ::GetDeviceCaps(dc, VERTRES);
+    auto mediaHeight = ::GetDeviceCaps(dc, VERTRES);
 
-    HRGN rgn = CreateRectRgn(0, 0, mediaWidth, mediaWHeight);
+    if (fit)
+    {
+        if (pageWidth > pageHeight)
+        {
+            width = mediaWidth;
+            height = static_cast<int32_t>(mediaWidth * (pageHeight / pageWidth));
+        }
+        else
+        {
+            height = mediaHeight;
+            width = static_cast<int32_t>(mediaHeight * (pageWidth / pageHeight));
+        }
+    }
+    
+    if (!width)
+        width = static_cast<int32_t>(pageWidth * dpiRatio);
+    if (!height)
+        height = static_cast<int32_t>(pageHeight * dpiRatio);
 
+    HRGN rgn = CreateRectRgn(0, 0, mediaWidth, mediaHeight);
 
     ::SelectClipRgn(dc, rgn);
     ::DeleteObject(rgn);
@@ -86,7 +97,7 @@ void node_pdfium::PDFDocument::printPage(HDC dc,
     ::SelectObject(dc, ::GetStockObject(WHITE_BRUSH));
 
     // If a PS_NULL pen is used, the dimensions of the rectangle are 1 pixel less.
-    ::Rectangle(dc, 0, 0, mediaWidth, mediaWHeight);
+    ::Rectangle(dc, 0, 0, mediaWidth, mediaHeight);
     return ::FPDF_RenderPage(dc, page, 0, 0, width, height, 0,
                              FPDF_ANNOT | FPDF_PRINTING | FPDF_NO_CATCH);
 }

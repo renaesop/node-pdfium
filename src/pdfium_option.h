@@ -11,6 +11,7 @@ namespace node_pdfium {
         int32_t copies = 1;
         int32_t width = 0;
         int32_t height = 0;
+        bool fit = false;
         std::vector<std::pair<int32_t, int32_t>> page_list;
     };
 

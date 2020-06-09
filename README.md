@@ -11,6 +11,7 @@
                 height,
                 dpi,
                 copies,
+		fit
             });
 ````
 
