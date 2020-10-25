@@ -14,6 +14,6 @@ namespace node_pdfium {
         std::vector<std::pair<int32_t, int32_t>> page_list;
     };
 
-    std::unique_ptr<PdfiumOption> V8OptionToStruct(const v8::Local<v8::Value>& options);
+    std::unique_ptr<PdfiumOption> V8OptionToStruct(const Napi::Value& options);
 };
 #endif

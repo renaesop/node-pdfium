@@ -3,17 +3,17 @@
 
 namespace node_pdfium
 {
-Unique_HDC GetPrinterDC(const v8::Local<v8::Value> &printerName)
+Unique_HDC GetPrinterDC(const Napi::Value &printerName)
 {
-    const v8::Local<v8::String> printerNameV8Str = printerName->ToString(Nan::GetCurrentContext()).ToLocalChecked();
+    const Napi::String printerNameV8Str = printerName->ToString(Napi::GetCurrentContext());
 
     Unique_HDC printerDC(::CreateDCW(L"WINSPOOL", reinterpret_cast<LPCWSTR>(*v8::String::Value(v8::Isolate::GetCurrent(), printerNameV8Str)), NULL, NULL));
 
     return printerDC;
 }
-Unique_HPrinter GetPrinterHanlde(const v8::Local<v8::Value> &printerName)
+Unique_HPrinter GetPrinterHanlde(const Napi::Value &printerName)
 {
-    const v8::Local<v8::String> printerNameV8Str = printerName->ToString(Nan::GetCurrentContext()).ToLocalChecked();
+    const Napi::String printerNameV8Str = printerName->ToString(Napi::GetCurrentContext());
 
     HANDLE handle = NULL;
 
