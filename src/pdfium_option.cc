@@ -26,11 +26,11 @@ std::unique_ptr<PdfiumOption> V8OptionToStruct(const Napi::Value &options)
 
         if (obj.Has("pageList"))
         {
-            auto& o = obj.Get("pageList") ;
-            auto& arr = o.As<Napi::Array>();
+            auto& pageList = obj.Get("pageList") ;
+            Napi::Array& arr = pageList.As<Napi::Array>();
             for (unsigned int i = 0; i < arr.Length(); ++i)
             {
-                const Napi::Value& item = arr[i].As<Napi::Array>();
+                const Napi::Array& item = arr[i].As<Napi::Array>();
                 auto pair = std::make_pair(
                     item[0].As<Napi::Number>().Int32Value(),
                     item[1].As<Napi::Number>().Int32Value());
