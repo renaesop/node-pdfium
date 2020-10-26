@@ -59,9 +59,8 @@ void checkError(Napi::Env &env, const std::wstring &failure, const std::wstring 
     default:
         ss << "Unknown error " << err;
     }
-    auto s = ss.str();
-    Napi::Error::New(env, s)
-        .ThrowAsJavaScriptException();
+    std::string s = ss.str();
+    Napi::Error::New(env, s).ThrowAsJavaScriptException();
 }
 
 void PrintPDF(const Napi::CallbackInfo&args)

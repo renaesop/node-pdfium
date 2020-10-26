@@ -17,7 +17,7 @@ Unique_HPrinter GetPrinterHanlde(const Napi::Value &printerName)
 
     HANDLE handle = NULL;
 
-    ::OpenPrinterW(reinterpret_cast<LPCWSTR>(printerNameV8Str.Utf16Value().c_str()), &handle, NULL);
+    ::OpenPrinterW(reinterpret_cast<LPTSTR>(printerNameV8Str.Utf16Value().c_str()), &handle, NULL);
 
     Unique_HPrinter printerH(handle);
 
