@@ -15,19 +15,18 @@ namespace node_pdfium
 {
 bool checkString(const Napi::Value &arg, const std::string &name)
 {
-    v8::Isolate *isolate = v8::Isolate::GetCurrent();
     if (!arg.IsString())
     {
         std::stringstream ss;
         ss << "Wrong type of" << name;
         std::string s = ss.str();
-        isolate->ThrowException(v8::Exception::TypeError(Napi::String::New(env, s.c_str())));
+        Napi::Error::New(env, s).ThrowAsJavaScriptException();
         return false;
     }
     return true;
 }
 
-void checkError(v8::Isolate* isolate, const std::wstring &failure, const std::wstring &arg)
+void checkError(Napi::Env &env, const std::wstring &failure, const std::wstring &arg)
 {
     unsigned long err = FPDF_GetLastError();
 
@@ -61,14 +60,13 @@ void checkError(v8::Isolate* isolate, const std::wstring &failure, const std::ws
         ss << "Unknown error " << err;
     }
     auto s = ss.str();
-    isolate->ThrowException(v8::Exception::TypeError(
-        Napi::String::New(env, reinterpret_cast<const uint16_t *>(s.c_str()))
-            ));
+    Napi::Error::New(env, s)
+        .ThrowAsJavaScriptException();
 }
 
 void PrintPDF(const Napi::CallbackInfo&args)
 {
-    v8::Isolate *isolate = args.GetIsolate();
+    Napi::Env &env = args.Env();
     const Napi::Value &printerName = args[0];
     const Napi::Value &filePath = args[1];
     const Napi::Value &v8_options = args[2];
@@ -81,20 +79,19 @@ void PrintPDF(const Napi::CallbackInfo&args)
 
     if (printer_dc == nullptr)
     {
-        checkError(isolate, L" initiate device context for the printer", L"");
+        checkError(env, L" initiate device context for the printer", L"");
         return;
     }
 
     std::unique_ptr<PdfiumOption> options(V8OptionToStruct(v8_options));
     // @TODO
-    auto filePathStr = filePath.To<Napi::String>();
-    v8::String::Value utf16Val(v8::Isolate::GetCurrent(), filePathStr);
-    std::wstring fileWstr(reinterpret_cast<wchar_t *>(*utf16Val), utf16Val.Length());
-    auto doc = std::make_unique<PDFDocument>(fileWstr.c_str());
+    auto utf16Val = filePath.As<Napi::String>().Utf16Value();
+    auto fileWstr = reinterpret_cast<LPCWSTR>(utf16Val.c_str());
+    auto doc = std::make_unique<PDFDocument>(fileWstr);
 
     if (!doc->LoadDocument())
     {
-        checkError(isolate, L"load the document", fileWstr);
+        checkError(env, L"load the document", fileWstr);
         return;
     }
 
@@ -104,7 +101,7 @@ void PrintPDF(const Napi::CallbackInfo&args)
     }
     catch (const std::exception &e)
     {
-     checkError(isolate, L"print the given document", fileWstr);
+     checkError(env, L"print the given document", fileWstr);
         return;
     }
 }
@@ -112,8 +109,9 @@ void PrintPDF(const Napi::CallbackInfo&args)
 Napi::Object Init(Napi::Env env, Napi::Object exports)
 {
     FPDF_InitLibrary();
-    (target).Set(Napi::String::New(env, "printPDF"),
-             Napi::GetFunction(Napi::Function::New(env, PrintPDF)));
+    exports.Set(Napi::String::New(env, "printPDF"),
+            Napi::Function::New(env, PrintPDF));
+    return exports;
 }
 
 NODE_API_MODULE(node_pdfium, Init)

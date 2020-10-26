@@ -1,10 +1,9 @@
 #include "pdfium_option.h"
 
-#define INIT_PDFIUM_OPTION(name, type)                                           \
-    if (obj->Has(Napi::GetCurrentContext(), Napi:: v8::String::New(env, #name)).ToChecked())            \
+#define INIT_PDFIUM_OPTION(name)                                           \
+    if (obj->Has(Napi::String::New(env, #name)).ToChecked())            \
     {                                                                      \
-        ops->name = Napi::To< type>(                                    \
-            (obj).Get(Napi:: v8::String::New(env, #name))) \
+        ops->name = (obj).Get(Napi::String::New(env, #name)).ToNumber().Int32Value() \
                         ;                                    \
     }
 
@@ -16,6 +15,7 @@ std::unique_ptr<PdfiumOption> V8OptionToStruct(const Napi::Value &options)
     if (options.IsObject())
     {
         auto obj = options->ToObject(Napi::GetCurrentContext());
+        auto &env = options.Env();
 
         INIT_PDFIUM_OPTION(dpi, int32_t);
         INIT_PDFIUM_OPTION(copies, int32_t);
@@ -24,18 +24,16 @@ std::unique_ptr<PdfiumOption> V8OptionToStruct(const Napi::Value &options)
 
         ops->dpi = ops->dpi / 72;
 
-        if (obj->Has(Napi::GetCurrentContext(), Napi::String::New(env, "pageList")).ToChecked())
+        if (obj->Has(Napi::String::New(env, "pageList")))
         {
-            auto o = (obj).Get(Napi::String::New(env, "pageList")
-                                  )
-                         ;
-            auto arr = o.As<Napi::Array>();
+            auto& o = obj.Get(Napi::String::New(env, "pageList")) ;
+            auto& arr = o.As<Napi::Array>();
             for (unsigned int i = 0; i < arr->Length(); ++i)
             {
-                const auto &item = (arr).Get(i.As<Napi::Array>());
+                const auto &item = arr[i].As<Napi::Array>();
                 auto pair = std::make_pair(
-                    (arr).Get(0.As<Napi::Number>().Int32Value()),
-                    (arr).Get(1.As<Napi::Number>().Int32Value()));
+                    item[0].As<Napi::Number>().Int32Value(),
+                    item[1].As<Napi::Number>().Int32Value());
                 ops->page_list.push_back(std::move(pair));
             }
         }
