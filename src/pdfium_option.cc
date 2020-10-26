@@ -1,7 +1,7 @@
 #include "pdfium_option.h"
 
 #define INIT_PDFIUM_OPTION(name)                                           \
-    if (obj->Has(Napi::String::New(env, #name)).ToChecked())            \
+    if (obj.Has(Napi::String::New(env, #name)).ToChecked())            \
     {                                                                      \
         ops->name = (obj).Get(Napi::String::New(env, #name)).ToNumber().Int32Value() \
                         ;                                    \
@@ -14,17 +14,17 @@ std::unique_ptr<PdfiumOption> V8OptionToStruct(const Napi::Value &options)
     auto ops = std::make_unique<PdfiumOption>();
     if (options.IsObject())
     {
-        auto obj = options->ToObject(Napi::GetCurrentContext());
+        auto obj = options.ToObject();
         auto &env = options.Env();
 
-        INIT_PDFIUM_OPTION(dpi, int32_t);
-        INIT_PDFIUM_OPTION(copies, int32_t);
-        INIT_PDFIUM_OPTION(width, int32_t);
-        INIT_PDFIUM_OPTION(height, int32_t);
+        INIT_PDFIUM_OPTION(dpi);
+        INIT_PDFIUM_OPTION(copies);
+        INIT_PDFIUM_OPTION(width);
+        INIT_PDFIUM_OPTION(height);
 
         ops->dpi = ops->dpi / 72;
 
-        if (obj->Has(Napi::String::New(env, "pageList")))
+        if (obj.Has(Napi::String::New(env, "pageList")))
         {
             auto& o = obj.Get(Napi::String::New(env, "pageList")) ;
             auto& arr = o.As<Napi::Array>();
