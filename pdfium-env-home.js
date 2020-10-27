@@ -9,7 +9,7 @@ if (os.platform() !== 'win32') {
 if (process.env.PDFIUM_HOME) {
     home = process.env.PDFIUM_HOME;
 } else {
-    home = path.join(__dirname, os.arch());
+    home = path.join(__dirname, process.env.TARGET_ARCH);
 }
 
 process.stdout.write(home)
