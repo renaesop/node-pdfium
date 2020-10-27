@@ -22,11 +22,11 @@
                 "src/include"
             ],
             "variables": {
-                "PDFIUM_HOME%": "<!(npx cross-env TARGET_ARCH=<(target_arch) node pdfium-env-home.js)",
+                "PDFIUM_HOME%": "<!(npx -q cross-env TARGET_ARCH=<(target_arch) node pdfium-env-home.js)",
                 "PDFIUM_LIB%": "pdfium.dll.lib",
                 "PDFIUM_DLL%": "pdfium.dll",
                 "conditions": [
-                    ['"<!(npx cross-env TARGET_ARCH=<(target_arch) node pdfium-env-home.js)" == ""', {
+                    ['"<!(npx -q cross-env TARGET_ARCH=<(target_arch) node pdfium-env-home.js)" == ""', {
                         "PDFIUM_HOME%": "C:/Downloads/pdfium"
                     }]
                 ]
