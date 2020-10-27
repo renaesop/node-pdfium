@@ -7,7 +7,7 @@
                 "~/.node-gyp/12.0.0/include/node",
                 "${workspaceRoot}/src",
                 "${workspaceRoot}/src/include",
-                "${workspaceRoot}/node_modules/nan"
+                "${workspaceRoot}/node_modules/napi"
             ],
             "defines": [
                 "_DEBUG",

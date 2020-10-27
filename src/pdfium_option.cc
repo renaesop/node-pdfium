@@ -3,8 +3,7 @@
 #define INIT_PDFIUM_OPTION(name)                                           \
     if (obj.Has(#name))            \
     {                                                                      \
-        ops->name = (obj).Get(#name).ToNumber().Int32Value() \
-                        ;                                    \
+        ops->name = (obj).Get(#name).ToNumber().Int32Value() ;                                    \
     }
 
 namespace node_pdfium
@@ -30,10 +29,10 @@ std::unique_ptr<PdfiumOption> V8OptionToStruct(const Napi::Value &options)
             Napi::Array& arr = pageList.As<Napi::Array>();
             for (unsigned int i = 0; i < arr.Length(); ++i)
             {
-                const Napi::Array& item = arr[i].As<Napi::Array>();
+                const Napi::Array& item = (arr.Get(i)).As<Napi::Array>();
                 auto pair = std::make_pair(
-                    item[0].As<Napi::Number>().Int32Value(),
-                    item[1].As<Napi::Number>().Int32Value());
+                    item.Get(static_cast<unsigned int>(0)).As<Napi::Number>().Int32Value(),
+                    item.Get(static_cast<unsigned int>(1)).As<Napi::Number>().Int32Value());
                 ops->page_list.push_back(std::move(pair));
             }
         }

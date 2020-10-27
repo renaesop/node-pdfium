@@ -24,9 +24,8 @@
   },
   "homepage": "https://github.com/renaesop/node-pdfium#readme",
   "dependencies": {
-    "node-addon-api": "3.0.2",
-    "bindings": "^1.4.0",
-    "node-addon-api": "^3.0.2"
+    "bindings": "^1.5.0",
+    "node-addon-api": "3.0.2"
   },
   "devDependencies": {
     "mocha": "^6.1.4"

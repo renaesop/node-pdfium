@@ -7,6 +7,9 @@ describe('basic pdfium use', () => {
         await pdfium.printPDF({
             filePath: path.join(__dirname, '..', 'example', 'usps.pdf'),
             printerName: 'Microsoft Print to PDF',
+            dpi: 203, 
+            width: 800,
+            height: 800,
         })
     });
 });
