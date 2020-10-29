@@ -1,6 +1,6 @@
 const path = require('path');
 
-const pdfium = require('../lib/pdfium');
+const pdfium = require('../');
 
 describe('basic pdfium use', () => {
     it('should work and not throw', async () => {
