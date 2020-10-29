@@ -1,1 +1,1 @@
-module.exports = require('./lib/pdfium');
+module.exports = require('./pdfium');
